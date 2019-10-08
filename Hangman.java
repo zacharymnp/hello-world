@@ -16,39 +16,34 @@ public class Hangman {
 		display += "_ "; }
 	System.out.println(display);
 	
-	//while (yourGuess.hasNextLine()) { //have multiple while loops, or move print before Scanner
-//https://stackoverflow.com/questions/7209110/java-util-nosuchelementexception-no-line-found
 	Scanner yourGuess = new Scanner(System.in); //ask for a guess
-	System.out.println("What is your guess?");	
-	String guess = yourGuess.nextLine();
+	while (mistakes < 6 && correctGuesses < word.length()) { 
+		System.out.println("What is your guess?");	
+		String guess = yourGuess.nextLine();
 	
-	int position = word.indexOf(guess); //counting mistakes
-	if (position == -1) {
-		mistakes++;	}
-	else
-		correctGuesses++; //counting correct guesses
+		int position = word.indexOf(guess); //counting mistakes
+		if (position == -1) {
+			mistakes++;	}
+		else
+			correctGuesses++; //counting correct guesses
 	
-	String newDisplay = "";
+		String newDisplay = "";
 	
-	for (int i = 0; i < word.length(); i++) //I think this bit is the problem
-		if (i == position) {
-			newDisplay += word.charAt(i);
-			newDisplay += display.charAt(1); } //print guessed letter
-		else {
-			newDisplay += display.charAt(0); //print '_'
-			newDisplay += display.charAt(1); }
+		for (int i = 0; i < word.length(); i++) //I think this bit is the problem
+			if (i == position) {
+				newDisplay += word.charAt(i);
+				newDisplay += display.charAt(1); } //print guessed letter
+			else {
+				newDisplay += display.charAt(0); //print '_'
+				newDisplay += display.charAt(1); }
+		
+		System.out.println(newDisplay);
+	//use array and boolean value
+	//if boolean is true, add letter from array to new display, otherwise, add new letter
+		
 	
-	System.out.println(newDisplay);
-	
+	}
 	yourGuess.close();
-	//}
-	
-	/*while (mistakes < 6 && correctGuesses < word.length());
-	if (mistakes == 6) {
-		System.out.println("You lose!"); }
-	if (correctGuesses == word.length()) {
-		System.out.println("You win!"); }
-	*/
 	myWord.close();
 	}
 }
