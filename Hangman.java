@@ -10,7 +10,7 @@ public class Hangman {
 		
 	Scanner myWord = new Scanner(System.in); //ask for initial word
 	System.out.println("What is your word?");
-	String word = myWord.nextLine();
+	String word = myWord.nextLine().toLowerCase();
 	
 	int mistakes = 0; //initialize mistakes
 	int correctGuesses = 0; //initializes correct guesses
