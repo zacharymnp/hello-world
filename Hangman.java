@@ -3,7 +3,6 @@
  * Last Updated 10/09/2019
  */
 import java.util.Scanner;
-import java.util.ArrayList;
 
 public class Hangman {
 
@@ -17,44 +16,34 @@ public class Hangman {
 	int correctGuesses = 0; //initializes correct guesses
 	String display = "";
 	
-	for (int i = 1; i < word.length(); i++) { //print blank spaces
+	for (int i = 1; i <= word.length(); i++) { //print blank spaces
 		display += "_ ";
 	}
 	System.out.println(display);
 	
-	ArrayList<String> guessedLetters = new ArrayList<String>(); //create list of guessed letters
+	char[] guessed = new char[word.length()]; //creates array
 	
 	Scanner yourGuess = new Scanner(System.in); //ask for a guess
 	while (mistakes < 6 && correctGuesses < word.length()) { 
 		System.out.println("What is your guess?");	
-		String guess = yourGuess.nextLine();
-		
-		if (guessedLetters.contains(guess)) { //checks to see if guess is on list, but doesn't actually stop it from being checked
-			System.out.println("You've already guessed that");
-		}
+		String guess = yourGuess.nextLine().substring(0, 1); //receives guess input
 	
 		int position = word.indexOf(guess);
-		int positionAlreadyGuessed = -1;
-		if (!(guessedLetters.isEmpty())) {
-			positionAlreadyGuessed = word.indexOf(guessedLetters.get(0));
-		}
 		
 		if (position == -1) {  //counting mistakes
 			mistakes++;
+			System.out.println("Wrong!");
 		}
 		else {
 			correctGuesses++; //counting correct guesses
+			System.out.println("Right!");
+			guessed[position] = guess.charAt(0); //adds guess to array
 		}
 		
 		String newDisplay = "";
-	
 		for (int i = 0; i < word.length(); i++) {
-			if (i == position) {
-				newDisplay += word.charAt(i); //print guessed letter
-				newDisplay += " ";
-			} 
-			if (i == positionAlreadyGuessed) {
-				newDisplay +=word.charAt(i); //print letters already guessed
+			if (!(guessed[i] == 0)) {
+				newDisplay += guessed[i];
 				newDisplay += " ";
 			}
 			else {
@@ -62,8 +51,15 @@ public class Hangman {
 			}
 		}
 		System.out.println(newDisplay);
-		guessedLetters.add(guess); //adds guess to list
 	}
+	
+	if (correctGuesses == word.length()) {
+		System.out.println("You win!");
+	}
+	else {
+		System.out.println("You lose!");
+	}
+	
 	yourGuess.close();
 	myWord.close();
 
