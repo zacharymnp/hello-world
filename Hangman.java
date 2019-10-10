@@ -25,8 +25,15 @@ public class Hangman {
 	
 	Scanner yourGuess = new Scanner(System.in); //ask for a guess
 	while (mistakes < 6 && correctGuesses < word.length()) { 
-		System.out.println("What is your guess?");	
-		String guess = yourGuess.nextLine().substring(0, 1); //receives guess input
+		System.out.println("What is your guess?");
+		String guess = yourGuess.nextLine(); //receives guess input
+		if (guess.length() == word.length()) {
+			if (guess.equals(word)) {
+				System.out.println("Wow, you're so cool. You got it!");
+				break;
+			}
+		}
+		guess = guess.substring(0,1);
 	
 		int position = word.indexOf(guess);
 		
@@ -56,8 +63,9 @@ public class Hangman {
 	if (correctGuesses == word.length()) {
 		System.out.println("You win!");
 	}
-	else {
+	if (mistakes == 6) {
 		System.out.println("You lose!");
+		System.out.println("The word was: " + word);
 	}
 	
 	yourGuess.close();
