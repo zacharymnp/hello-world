@@ -3,6 +3,7 @@
  * Last Updated 10/09/2019
  */
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Hangman {
 
@@ -31,25 +32,33 @@ public class Hangman {
 		String guess = yourGuess.nextLine(); //receives guess input
 		if (guess.length() == word.length()) {
 			if (guess.equals(word)) {
-				System.out.println("Wow, you're so cool. You're probably me. You got it!");
+				System.out.println("Wow, you're so cool. You got it!");
 				break;
 			}
 			else {
 				mistakes++;
-				System.out.println("You're so fudging dumb");
+				System.out.println("Incorrect");
 			}
 		}
 		guess = guess.substring(0,1);
-	
-		int position = word.indexOf(guess);
 		
-		if (position == -1) {  //counting mistakes
-			mistakes++;
-			System.out.println("Wrong!");
+		ArrayList<Integer> indices = new ArrayList<Integer>(); //creates list of indices of the guessed letters in the word
+		for (int i = 0; i < word.length(); i++) {
+			if (word.substring(i, i + 1).contains(guess)) {
+				indices.add(i);
+			}
 		}
-		else {
-			System.out.println("Right!");
-			guessed[position] = guess.charAt(0); //adds guess to array
+		
+		for (int i = 0; i < indices.size() || indices.size() == 0; i++) {
+			if (indices.size() == 0) {  //counting mistakes
+				mistakes++;
+				System.out.println("\n\n\n\nWrong!\n\n");
+				break;
+			}
+			else {
+				System.out.println("\n\n\n\nRight!\n\n");
+				guessed[indices.get(i)] = guess.charAt(0); //adds guess to array
+			}
 		}
 		
 		newDisplay = "";
