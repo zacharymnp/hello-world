@@ -16,6 +16,7 @@ public class Hangman {
 
 	
 	int mistakes = 0; //initialize mistakes
+	final int mistakesCap = 6;
 	String display = "";
 	String newDisplay = "_";
 	
@@ -27,7 +28,7 @@ public class Hangman {
 	char[] guessed = new char[word.length()]; //creates array
 	
 	Scanner yourGuess = new Scanner(System.in); //ask for a guess
-	while (mistakes < 6 && newDisplay.contains("_")) { 
+	while (mistakes < mistakesCap && newDisplay.contains("_")) { 
 		System.out.println("What is your guess?");
 		String guess = yourGuess.nextLine(); //receives guess input
 		if (guess.length() == word.length()) {
@@ -77,7 +78,7 @@ public class Hangman {
 	if (!(newDisplay.contains("_"))) {
 		System.out.println("You win!");
 	}
-	if (mistakes == 6) {
+	if (mistakes == mistakesCap) {
 		System.out.println("You lose!");
 		System.out.println("The word was: " + word);
 	}
