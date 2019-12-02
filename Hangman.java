@@ -1,14 +1,19 @@
-/*
+/**
  * Hangman --- cool Hangman game
  * @author Zachary Niles Peretz
+ * @version 2.1
 */
 import java.util.Scanner;
 import java.util.ArrayList;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JButton;
 
 /*
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,57 +29,132 @@ public class Hangman extends JPanel{
 	
 	private String _display = "";
 	private int _mistakes = 0;
+	private boolean _winCondition = false;
+	private String _word;
 	
-	@Override
 	public void paint(Graphics g) {
+		/**
+		 * This method is used to paint the GUI onto the frame
+		 * 
+		 * @Override
+		 * @param g the Graphics context on which to paint
+		*/
+		
 		super.paint(g);
 		g.setColor(Color.black);
 		g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
-		g.drawString(_display, 10, 300);
 		
-		g.drawLine(75, 250, 225, 250); //draw base
-		g.drawLine(150, 250, 150, 50); //draw pole
-		g.drawLine(150, 50, 225, 50); //draw beam
-		g.drawLine(150, 100, 175, 50); //draw support
-		g.drawLine(225, 50, 225, 75); //draw rope
+		g.drawLine(50, 250, 200, 250); //draw base
+		g.drawLine(125, 250, 125, 50); //draw pole
+		g.drawLine(125, 50, 200, 50); //draw beam
+		g.drawLine(125, 100, 150, 50); //draw support
+		g.drawLine(200, 50, 200, 75); //draw rope
 		if (_mistakes == 6) { 
-			g.drawLine(225, 175, 250, 200); //draw right leg
-			g.drawLine(223, 80, 220, 85); //left eye /
-			g.drawLine(220, 80, 223, 85); //left eye \
-			g.drawLine(230, 80, 227, 85); //right eye /
-			g.drawLine(227, 80, 230, 85); //right eye \
+			g.drawLine(200, 175, 225, 200); //draw right leg
+			g.drawLine(198, 80, 195, 85); //left eye /
+			g.drawLine(195, 80, 198, 85); //left eye \
+			g.drawLine(205, 80, 202, 85); //right eye /
+			g.drawLine(202, 80, 205, 85); //right eye \
+			g.drawString("Haha, you lose", 10, 300);
+			g.drawString("The word was: " + _word, 10, 350);
+		}
+		else if (_winCondition == false) {
+			g.drawString(_display, 10, 300);
+		}
+		else {
+			g.drawString("You win!", 10, 300);
+			g.drawString("The word was: " + _display, 10, 350);
 		}
 		if (_mistakes >= 5) {
-			g.drawLine(225, 175, 200, 200); //draw left leg
+			g.drawLine(200, 175, 175, 200); //draw left leg
 		}
 		if (_mistakes >= 4) {
-			g.drawLine(225, 125, 250, 150); //draw right arm
+			g.drawLine(200, 125, 225, 150); //draw right arm
 		}
 		if (_mistakes >= 3) {
-			g.drawLine(225, 125, 200, 150); //draw left arm
+			g.drawLine(200, 125, 175, 150); //draw left arm
 		}
 		if (_mistakes >= 2) {
-			g.drawLine(225, 100, 225, 175); //draw body
+			g.drawLine(200, 100, 200, 175); //draw body
 		}
 		if (_mistakes >= 1) {
-			g.drawOval(212, 75, 25, 25); //draw head
+			g.drawOval(187, 75, 25, 25); //draw head
 		}
 	}
 	
 	public static void main(String[] args) {
 
-		Hangman hangman = new Hangman();
+		Hangman lines = new Hangman();
 		//creates the frame and stuff
 		JFrame frame = new JFrame("Hangman"); //creates the frame
-		frame.getContentPane().add(hangman);
-		frame.setSize(400, 400);
+		JPanel linesPanel = new JPanel();
+		linesPanel.add(lines);
+		frame.setSize(500, 400);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
+		
+		GridLayout grid = new GridLayout(7, 4);
+		frame.setLayout(grid);
+		frame.getContentPane().add(linesPanel);
+
+		JButton aButton = new JButton("A");
+		frame.add(aButton);
+		JButton bButton = new JButton("B");
+		frame.add(bButton);
+		JButton cButton = new JButton("C");
+		frame.add(cButton);
+		JButton dButton = new JButton("D");
+		frame.add(dButton);
+		JButton eButton = new JButton("E");
+		frame.add(eButton);
+		JButton fButton = new JButton("F");
+		frame.add(fButton);
+		JButton gButton = new JButton("G");
+		frame.add(gButton);
+		JButton hButton = new JButton("H");
+		frame.add(hButton);
+		JButton iButton = new JButton("I");
+		frame.add(iButton);
+		JButton jButton = new JButton("J");
+		frame.add(jButton);
+		JButton kButton = new JButton("K");
+		frame.add(kButton);
+		JButton lButton = new JButton("L");
+		frame.add(lButton);
+		JButton mButton = new JButton("M");
+		frame.add(mButton);
+		JButton nButton = new JButton("N");
+		frame.add(nButton);
+		JButton oButton = new JButton("O");
+		frame.add(oButton);
+		JButton pButton = new JButton("P");
+		frame.add(pButton);
+		JButton qButton = new JButton("Q");
+		frame.add(qButton);
+		JButton rButton = new JButton("R");
+		frame.add(rButton);
+		JButton sButton = new JButton("S");
+		frame.add(sButton);
+		JButton tButton = new JButton("T");
+		frame.add(tButton);
+		JButton uButton = new JButton("U");
+		frame.add(uButton);
+		JButton vButton = new JButton("V");
+		frame.add(vButton);
+		JButton wButton = new JButton("W");
+		frame.add(wButton);
+		JButton xButton = new JButton("X");
+		frame.add(xButton);
+		JButton yButton = new JButton("Y");
+		frame.add(yButton);
+		JButton zButton = new JButton("Z");
+		frame.add(zButton);
 
 		Scanner myWord = new Scanner(System.in); //ask for initial word
 		System.out.println("What is your word?");
 		String word = myWord.nextLine().toLowerCase();
+		lines._word = word;
 		System.out.println("\n\n\n\n\n\n\n\n");
 		
 		/*
@@ -100,8 +180,8 @@ public class Hangman extends JPanel{
 		}
 		System.out.println(display);
 		
-		hangman._display = display;
-		hangman.repaint();
+		lines._display = display;
+		lines.repaint();
 		
 		String[] guessed = new String[word.length()]; //creates correct guess array
 		ArrayList<String> guessedWrong = new ArrayList<String>(); //creates incorrect guess ArrayList
@@ -118,8 +198,8 @@ public class Hangman extends JPanel{
 				}
 				else {
 					mistakes++;
-					hangman._mistakes++;
-					hangman.repaint();
+					lines._mistakes++;
+					lines.repaint();
 					System.out.println("Incorrect");
 				}
 			}
@@ -143,8 +223,8 @@ public class Hangman extends JPanel{
 			for (int i = 0; i < indices.size() || indices.size() == 0; i++) {
 				if (indices.size() == 0) {  //if indices is empty, meaning word does not contain the guess, then adds mistake
 					mistakes++;
-					hangman._mistakes++;
-					hangman.repaint();
+					lines._mistakes++;
+					lines.repaint();
 					System.out.println("\n\n\n\nWrong!\n\n");
 					guessedWrong.add(guess);
 					break;
@@ -167,12 +247,13 @@ public class Hangman extends JPanel{
 			}
 			System.out.println(newDisplay);
 			
-			hangman._display = newDisplay;
-			hangman.repaint();
+			lines._display = newDisplay;
+			lines.repaint();
 		}
 		
 		if (!(newDisplay.contains("_"))) {
 			System.out.println("You win!");
+			lines._winCondition = true;
 		}
 		if (mistakes == 6) {
 			System.out.println("You lose!");
@@ -187,11 +268,8 @@ public class Hangman extends JPanel{
 /*
  * Things to add:
  * proper documentation
- * list of already guessed or not guessed letters
- * eventually I'll just have buttons hopefully so it won't be a problem
  * https call
- * graphics
  * make it better with methods (maybe do the Scanner in a method)
- * maybe find a way to get rid of the indices ArrayList
- * other general optimization
+ * find a way to get rid of the indices ArrayList perhaps
+ * general optimization
  */
