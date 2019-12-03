@@ -5,7 +5,6 @@
 */
 import java.util.Scanner;
 import java.util.ArrayList;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -87,8 +86,6 @@ public class Hangman extends JPanel{
 		Hangman lines = new Hangman();
 		//creates the frame and stuff
 		JFrame frame = new JFrame("Hangman"); //creates the frame
-		JPanel linesPanel = new JPanel();
-		linesPanel.add(lines);
 		frame.setSize(500, 400);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,7 +93,8 @@ public class Hangman extends JPanel{
 		
 		GridLayout grid = new GridLayout(7, 4);
 		frame.setLayout(grid);
-		frame.getContentPane().add(linesPanel);
+		
+		frame.getContentPane().add(lines);
 
 		JButton aButton = new JButton("A");
 		frame.add(aButton);
