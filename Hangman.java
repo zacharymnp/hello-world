@@ -1,14 +1,15 @@
 /**
  * Hangman --- cool Hangman game
  * @author Zachary Niles Peretz
- * @version 2.1
+ * @version 2.3
 */
-import java.util.Scanner;
+//import java.util.Scanner;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,15 +22,22 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 */
 
-public class Hangman extends JPanel{
+public class Hangman extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L; //IDE gets mad w/o this if I have extension
 	
-	public static String newDisplay; //need to declare this early since I need it for the method
+	public static String newDisplay = "";
+	public static String guess = "";
+	public static int mistakes = 0;
 	
-	private String _display = "";
-	private int _mistakes = 0;
-	private boolean _winCondition = false;
-	private String _word;
+	private static int _mistakes = 0;
+	private static boolean _winCondition = false;
+	private static String _word = "";
+	private static boolean _isChoosingWord = true;
+	
+	public static ArrayList<Integer> indices = new ArrayList<Integer>(); //creates list of indices of the guessed letters in the word
+	public static ArrayList<String> _guessed = new ArrayList<String>(); //creates correct guess array
+
+
 	
 	public void paint(Graphics g) {
 		/**
@@ -41,15 +49,16 @@ public class Hangman extends JPanel{
 		
 		super.paint(g);
 		g.setColor(Color.black);
-		g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+		g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
 		
 		g.drawLine(50, 250, 200, 250); //draw base
-		g.drawLine(125, 250, 125, 50); //draw pole
-		g.drawLine(125, 50, 200, 50); //draw beam
-		g.drawLine(125, 100, 150, 50); //draw support
-		g.drawLine(200, 50, 200, 75); //draw rope
+		g.drawLine(100, 250, 100, 50); //draw pole
+		g.drawLine(100, 50, 200, 50); //draw beam
+		g.drawLine(100, 100, 150, 50); //draw support
+		g.drawLine(200, 50, 200, 50); //draw rope
+		
 		if (_mistakes == 6) { 
-			g.drawLine(200, 175, 225, 200); //draw right leg
+			g.drawLine(200, 175, 250, 225); //draw right leg
 			g.drawLine(198, 80, 195, 85); //left eye /
 			g.drawLine(195, 80, 198, 85); //left eye \
 			g.drawLine(205, 80, 202, 85); //right eye /
@@ -58,101 +67,221 @@ public class Hangman extends JPanel{
 			g.drawString("The word was: " + _word, 10, 350);
 		}
 		else if (_winCondition == false) {
-			g.drawString(_display, 10, 300);
+			g.drawString(newDisplay, 10, 300);
 		}
 		else {
 			g.drawString("You win!", 10, 300);
-			g.drawString("The word was: " + _display, 10, 350);
+			g.drawString("The word was: " + _word, 10, 350);
 		}
+		
 		if (_mistakes >= 5) {
-			g.drawLine(200, 175, 175, 200); //draw left leg
+			g.drawLine(200, 175, 150, 225); //draw left leg
 		}
 		if (_mistakes >= 4) {
-			g.drawLine(200, 125, 225, 150); //draw right arm
+			g.drawLine(200, 100, 250, 150); //draw right arm
 		}
 		if (_mistakes >= 3) {
-			g.drawLine(200, 125, 175, 150); //draw left arm
+			g.drawLine(200, 100, 150, 150); //draw left arm
 		}
 		if (_mistakes >= 2) {
 			g.drawLine(200, 100, 200, 175); //draw body
 		}
 		if (_mistakes >= 1) {
-			g.drawOval(187, 75, 25, 25); //draw head
+			g.drawOval(177, 50, 50, 50); //draw head
+		}
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		/**
+		 * This method is used to perform actions after a button is clicked
+		 * 
+		 * @override
+		 * @param e the event to be processed, which is the click of a button
+		*/
+		
+		JButton source = (JButton)(e.getSource());
+		if (_isChoosingWord == true) {
+			if (source.getText().contains("Enter")) {
+				_isChoosingWord = false;
+				source.setVisible(false);
+				repaint();
+			}
+			else {
+				_word = _word.concat(source.getText()).toLowerCase();
+				newDisplay = newDisplay.concat("_ ");
+			}
+		}
+		else {
+			if (_mistakes < 6 && _winCondition == false) { 
+				guess = source.getText().toLowerCase();
+				source.setVisible(false);
+				
+				for (int i = 0; i < _word.length(); i++) { //checks if each index of the word contains the guess, then adds to the indices ArrayList
+					if (_word.substring(i, i + 1).contains(guess)) {
+						indices.add(i);
+					}
+				}
+				
+				for (int i = 0; i < indices.size() || indices.size() == 0; i++) {
+					if (indices.size() == 0) {  //if indices is empty, meaning word does not contain the guess, then adds mistake
+						_mistakes++;
+						break;
+					}
+					else {
+						_guessed.add(indices.get(i), guess); //adds guess to _guessed
+					}
+				}
+				
+				newDisplay = "";
+				
+				for (int i = 0; i < _word.length(); i++) {
+					try {
+					if (!(_guessed.get(i) == null)) { //checks if _guessed contains a letter
+						newDisplay = newDisplay.concat(_guessed.get(i)); //adds the letter, _which I know guessed contains, to newDisplay
+						newDisplay = newDisplay.concat(" ");
+					}
+					else {
+						newDisplay = newDisplay.concat("_ "); //adds blank space
+					}
+					}
+					catch(Exception el) {
+						System.out.println("Caught exception" + el);
+					}
+				}
+			}
+			repaint();
 		}
 	}
 	
 	public static void main(String[] args) {
 
-		Hangman lines = new Hangman();
+		Hangman hangman = new Hangman();
 		//creates the frame and stuff
-		JFrame frame = new JFrame("Hangman"); //creates the frame
-		frame.setSize(500, 400);
+		JFrame frame = new JFrame("Hangman");
+		frame.getContentPane().add(hangman);
+		frame.setSize(516, 400);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
+		hangman.setLayout(null); //need this to use absolute positioning for buttons
 		
-		GridLayout grid = new GridLayout(7, 4);
-		frame.setLayout(grid);
-		
-		frame.getContentPane().add(lines);
-
+		Hangman buttonClick = new Hangman();
 		JButton aButton = new JButton("A");
-		frame.add(aButton);
+		aButton.addActionListener(buttonClick);
+		hangman.add(aButton);
+		aButton.setBounds(300, 0, 50, 50);
 		JButton bButton = new JButton("B");
-		frame.add(bButton);
+		bButton.addActionListener(buttonClick);
+		hangman.add(bButton);
+		bButton.setBounds(350, 0, 50, 50);
 		JButton cButton = new JButton("C");
-		frame.add(cButton);
+		cButton.addActionListener(buttonClick);
+		hangman.add(cButton);
+		cButton.setBounds(400, 0, 50, 50);
 		JButton dButton = new JButton("D");
-		frame.add(dButton);
+		dButton.addActionListener(buttonClick);
+		hangman.add(dButton);
+		dButton.setBounds(450, 0, 50, 50);
 		JButton eButton = new JButton("E");
-		frame.add(eButton);
+		eButton.addActionListener(buttonClick);
+		hangman.add(eButton);
+		eButton.setBounds(300, 50, 50, 50);
 		JButton fButton = new JButton("F");
-		frame.add(fButton);
+		fButton.addActionListener(buttonClick);
+		hangman.add(fButton);
+		fButton.setBounds(350, 50, 50, 50);
 		JButton gButton = new JButton("G");
-		frame.add(gButton);
+		gButton.addActionListener(buttonClick);
+		hangman.add(gButton);
+		gButton.setBounds(400, 50, 50, 50);
 		JButton hButton = new JButton("H");
-		frame.add(hButton);
+		hButton.addActionListener(buttonClick);
+		hangman.add(hButton);
+		hButton.setBounds(450, 50, 50, 50);
 		JButton iButton = new JButton("I");
-		frame.add(iButton);
+		iButton.addActionListener(buttonClick);
+		hangman.add(iButton);
+		iButton.setBounds(300, 100, 50, 50);
 		JButton jButton = new JButton("J");
-		frame.add(jButton);
+		jButton.addActionListener(buttonClick);
+		hangman.add(jButton);
+		jButton.setBounds(350, 100, 50, 50);
 		JButton kButton = new JButton("K");
-		frame.add(kButton);
+		kButton.addActionListener(buttonClick);
+		hangman.add(kButton);
+		kButton.setBounds(400, 100, 50, 50);
 		JButton lButton = new JButton("L");
-		frame.add(lButton);
+		lButton.addActionListener(buttonClick);
+		hangman.add(lButton);
+		lButton.setBounds(450, 100, 50, 50);
 		JButton mButton = new JButton("M");
-		frame.add(mButton);
+		mButton.addActionListener(buttonClick);
+		hangman.add(mButton);
+		mButton.setBounds(300, 150, 50, 50);
 		JButton nButton = new JButton("N");
-		frame.add(nButton);
+		nButton.addActionListener(buttonClick);
+		hangman.add(nButton);
+		nButton.setBounds(350, 150, 50, 50);
 		JButton oButton = new JButton("O");
-		frame.add(oButton);
+		oButton.addActionListener(buttonClick);
+		hangman.add(oButton);
+		oButton.setBounds(400, 150, 50, 50);
 		JButton pButton = new JButton("P");
-		frame.add(pButton);
+		pButton.addActionListener(buttonClick);
+		hangman.add(pButton);
+		pButton.setBounds(450, 150, 50, 50);
 		JButton qButton = new JButton("Q");
-		frame.add(qButton);
+		qButton.addActionListener(buttonClick);
+		hangman.add(qButton);
+		qButton.setBounds(300, 200, 50, 50);
 		JButton rButton = new JButton("R");
-		frame.add(rButton);
+		rButton.addActionListener(buttonClick);
+		hangman.add(rButton);
+		rButton.setBounds(350, 200, 50, 50);
 		JButton sButton = new JButton("S");
-		frame.add(sButton);
+		sButton.addActionListener(buttonClick);
+		hangman.add(sButton);
+		sButton.setBounds(400, 200, 50, 50);
 		JButton tButton = new JButton("T");
-		frame.add(tButton);
+		tButton.addActionListener(buttonClick);
+		hangman.add(tButton);
+		tButton.setBounds(450, 200, 50, 50);
 		JButton uButton = new JButton("U");
-		frame.add(uButton);
+		uButton.addActionListener(buttonClick);
+		hangman.add(uButton);
+		uButton.setBounds(300, 250, 50, 50);
 		JButton vButton = new JButton("V");
-		frame.add(vButton);
+		vButton.addActionListener(buttonClick);
+		hangman.add(vButton);
+		vButton.setBounds(350, 250, 50, 50);
 		JButton wButton = new JButton("W");
-		frame.add(wButton);
+		wButton.addActionListener(buttonClick);
+		hangman.add(wButton);
+		wButton.setBounds(400, 250, 50, 50);
 		JButton xButton = new JButton("X");
-		frame.add(xButton);
+		xButton.addActionListener(buttonClick);
+		hangman.add(xButton);
+		xButton.setBounds(450, 250, 50, 50);
 		JButton yButton = new JButton("Y");
-		frame.add(yButton);
+		yButton.addActionListener(buttonClick);
+		hangman.add(yButton);
+		yButton.setBounds(300, 300, 50, 50);
 		JButton zButton = new JButton("Z");
-		frame.add(zButton);
-
+		zButton.addActionListener(buttonClick);
+		hangman.add(zButton);
+		zButton.setBounds(350, 300, 50, 50);
+		JButton enterButton = new JButton("Enter");
+		enterButton.addActionListener(buttonClick);
+		hangman.add(enterButton);
+		enterButton.setBounds(400, 300, 100, 50);
+		hangman.repaint();
+				
+		/*
+		
 		Scanner myWord = new Scanner(System.in); //ask for initial word
 		System.out.println("What is your word?");
 		String word = myWord.nextLine().toLowerCase();
-		lines._word = word;
+		_word = word;
 		System.out.println("\n\n\n\n\n\n\n\n");
 		
 		/*
@@ -162,9 +291,8 @@ public class Hangman extends JPanel{
 			CloseableHttpResponse response = httpclient.execute(getRandomWord);
 			word = response.toString();
 		}
-		*/
+		//if adding back in need to stop this bit above
 		
-		int mistakes = 0;
 		String display = "";
 		newDisplay = "_";
 		
@@ -178,8 +306,7 @@ public class Hangman extends JPanel{
 		}
 		System.out.println(display);
 		
-		lines._display = display;
-		lines.repaint();
+		hangman.repaint();
 		
 		String[] guessed = new String[word.length()]; //creates correct guess array
 		ArrayList<String> guessedWrong = new ArrayList<String>(); //creates incorrect guess ArrayList
@@ -187,7 +314,7 @@ public class Hangman extends JPanel{
 		Scanner yourGuess = new Scanner(System.in); //ask for a guess
 		while (mistakes < 6 && newDisplay.contains("_")) { 
 			System.out.println("What is your guess?");
-			String guess = yourGuess.nextLine().toLowerCase(); //receives guess input
+			guess = yourGuess.nextLine().toLowerCase(); //receives guess input
 			
 			if (guess.length() == word.length()) { //guessing word outright
 				if (guess.equals(word)) {
@@ -196,8 +323,8 @@ public class Hangman extends JPanel{
 				}
 				else {
 					mistakes++;
-					lines._mistakes++;
-					lines.repaint();
+					_mistakes++;
+					hangman.repaint();
 					System.out.println("Incorrect");
 				}
 			}
@@ -211,7 +338,6 @@ public class Hangman extends JPanel{
 				System.out.println("Good job, you didn't already guess that");
 			}
 			
-			ArrayList<Integer> indices = new ArrayList<Integer>(); //creates list of indices of the guessed letters in the word
 			for (int i = 0; i < word.length(); i++) { //checks if each index of the word contains the guess, then adds to the indices ArrayList
 				if (word.substring(i, i + 1).contains(guess)) {
 					indices.add(i);
@@ -221,8 +347,8 @@ public class Hangman extends JPanel{
 			for (int i = 0; i < indices.size() || indices.size() == 0; i++) {
 				if (indices.size() == 0) {  //if indices is empty, meaning word does not contain the guess, then adds mistake
 					mistakes++;
-					lines._mistakes++;
-					lines.repaint();
+					_mistakes++;
+					hangman.repaint();
 					System.out.println("\n\n\n\nWrong!\n\n");
 					guessedWrong.add(guess);
 					break;
@@ -235,7 +361,7 @@ public class Hangman extends JPanel{
 			
 			newDisplay = "";
 			for (int i = 0; i < word.length(); i++) {
-				if (!(guessed[i] == null)) { //checks if guessed[] contains a letter
+				if (!(guessed[i] == null)) { //checks if guessed[] contains a letter //I think this throws an exception now, but I'll probably delete it so I won't bother fixing
 					newDisplay += guessed[i]; //adds the letter, which I know guessed[] contains, to newDisplay
 					newDisplay += " ";
 				}
@@ -245,13 +371,12 @@ public class Hangman extends JPanel{
 			}
 			System.out.println(newDisplay);
 			
-			lines._display = newDisplay;
-			lines.repaint();
+			hangman.repaint();
 		}
 		
 		if (!(newDisplay.contains("_"))) {
 			System.out.println("You win!");
-			lines._winCondition = true;
+			_winCondition = true;
 		}
 		if (mistakes == 6) {
 			System.out.println("You lose!");
@@ -260,11 +385,15 @@ public class Hangman extends JPanel{
 		
 		yourGuess.close();
 		myWord.close();
+		*/
 	}
 }
 
 /*
  * Things to add:
+ * fix graphics not working with multi-word things
+ * fix bug that complete guesses that aren't length of actual word just take in first letters
+ * spaces show up automatically
  * proper documentation
  * https call
  * make it better with methods (maybe do the Scanner in a method)
